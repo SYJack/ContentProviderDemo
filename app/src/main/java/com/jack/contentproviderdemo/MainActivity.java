@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
 
@@ -48,6 +49,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("image/*");
+            //开启剪切
+            intent.putExtra("crop", "true");
+            //剪切的宽高比为1:2
+            intent.putExtra("aspectX", 1);
+            intent.putExtra("aspectY", 2);
+            intent.putExtra("outputX", 20);
+            intent.putExtra("outputY", 40);
+            intent.putExtra("output", Uri.fromFile(new File("/mnt/sdcard/temp"))); // 保存路径
+            intent.putExtra("outputFormat", "JPEG");// 返回格式
             startActivityForResult(intent, READ_REQUEST);
         }
         if (id == R.id.btn_show_image) {
@@ -80,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //获取Bitmap图像
     private Bitmap getBitmapFromUri(Uri uri) throws IOException {
         ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
         FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
@@ -88,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return image;
     }
 
+    //    从内置的文件存储返回相片
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
